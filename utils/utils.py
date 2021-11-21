@@ -15,8 +15,6 @@ def create_matrix(X, seed=60615, fractionObserved=0.9):
     Xobs = Omega * X
     return Xobs, Omega
 
-<<<<<<< HEAD
-=======
 
 ## linear regression  (include timer)
 
@@ -33,4 +31,3 @@ def calculate_errors(actual, predict):
     mse = np.square(np.subtract(actual, predict)).mean()
     rmse = np.sqrt(mse)
     return mse, rmse
->>>>>>> fecac809de49d5a95926290519d8f730ad73ebd3
