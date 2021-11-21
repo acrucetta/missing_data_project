@@ -14,6 +14,9 @@ To find out the weights following steps have to be taken:
 
 Sources used:
 - https://machinelearningmastery.com/knn-imputation-for-missing-values-in-machine-learning/
+- https://www.numpyninja.com/post/mice-and-knn-missing-value-imputations-through-python
+- https://scikit-learn.org/stable/modules/generated/sklearn.metrics.pairwise.nan_euclidean_distances.html
+- https://chrisalbon.com/code/machine_learning/preprocessing_structured_data/imputing_missing_class_labels_using_k-nearest_neighbors/
 
 '''
 
