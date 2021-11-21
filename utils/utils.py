@@ -11,5 +11,3 @@ def create_matrix(X,fractionObserved=0.9):
     Xobs = Omega*X
     return Xobs, Omega
 
-
-
