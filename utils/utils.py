@@ -40,15 +40,25 @@ def create_matrix(X, seed=60615, fractionObserved=0.9, keepcols=None):
 ## linear regression  (include timer)
 
 ## performance metric
-def calculate_errors(actual, predict):
+def calculate_errors(actual, predict, continuous=True):
     '''
-    Calculates the MSE and RMSE of a predicted indicator
+    Calculates error metrics of a predicted indicator
     (actual and predict must be of same dimension)
     Inputs:
         actual (Array): array of size (n,)
         predict (Array): array of size (n,)
-    Returns (tuple): MSE (Float), RMSE (Float)
+        continuous (Bool): whether 
+    Returns (tuple) of 
+        two error metrics (MSE/RMSE if continuous, accuracy/F1 score otherwise)
     '''
-    mse = np.square(np.subtract(actual, predict)).mean()
-    rmse = np.sqrt(mse)
-    return mse, rmse
+    if continuous:
+        error1 = np.square(np.subtract(actual, predict)).mean()
+        error2 = np.sqrt(error1)
+    else:
+        error1 = (actual == predict).sum() / actual.shape[0]
+        truepositive = np.sum((predict == 1) & (actual == 1))
+        precision = truepositive / np.sum(predict == 1)
+        recall = truepositive / (truepositive + np.sum((predict == 0)  & 
+                                                       (actual == 1)))
+        error2 = 2 * precision * recall /(precision + recall)
+    return error1, error2
