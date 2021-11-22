@@ -28,26 +28,52 @@ def normalize_data(df):
     df = pd.DataFrame(scaler.fit_transform(df), columns = df.columns)
     return df
 
-
-def calculate_euclidean_distance(a, b):
-    '''
-    Calculates euclidean distance between point x
-    and point y.
-    '''
-    temp = a-b
-    dist = np.sqrt(np.dot(temp.T, temp))
-    return dist
-
-def knn_classifier(X, y, k=5):
-    '''
-    Recieves a matrix X and a vector y and uses a KNN
-    classifier to predict the class of each point in X.
-    '''
-    pass
+def kSmallest(arr, k):
     
-def KNN_imputation(X, k=5):
+    # Sort the given array 
+    arr_i = arr.copy()
+    arr_i.sort()
+  
+    # Return k'th element in the sorted array 
+    # Skips the first element since it contains 
+    # the value 0
+    return arr_i[1:k+1]
+
+def KNN_imputation(df, k=5):
     '''
-    Recieves a matrix X and imputes the missing values
-    using a K Nearest Neighbors imputer.
+    Recieves a dataframe df and imputes the missing values
+    using a K Nearest Neighbors imputer algorithm.
     '''
-    pass
+    # Extracting the numerical columns
+    numeric_df = df.select_dtypes(include=['float64', 'int64'])
+    
+    # Normalizing the data
+    numeric_df = normalize_data(numeric_df)
+    
+    # Iterating over each column
+    for j in range(len(numeric_df.columns)):
+        lst_missing = numeric_df.iloc[:,j][numeric_df.iloc[:,j].isnull()].index.to_list()
+        
+        # Iterating over missing rows
+        for i in lst_missing:
+            # Get the comparison row
+            euclidean_row = numeric_df.iloc[i]
+            
+            # Take euclidean distances of the other columns
+            euclidean_distances = nan_euclidean_distances(numeric_df, [euclidean_row.to_list()])
+            
+            # Flatten the euclidean distance array
+            euc_flattened = euclidean_distances.flatten(order='F')
+            
+            # Get the k smallest distances
+            k_nearest = kSmallest(euc_flattened, k)
+            k_nearest_indices = np.where(np.in1d(euc_flattened, k_nearest))[0]
+            
+            # Get mean of the k nearest neighbors
+            k_mean = numeric_df.iloc[k_nearest_indices].iloc[:,j].mean()
+            
+            # Assigning the value to the nan row cell
+            print(i,j)
+            numeric_df.iloc[i].iloc[j]=k_mean
+    return numeric_df
+    
