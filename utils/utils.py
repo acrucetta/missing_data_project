@@ -30,11 +30,10 @@ def create_matrix(X, seed=60615, fractionObserved=0.9, keepcols=None):
 
     if keepcols is not None:
         Omega = np.concatenate((Omega, omegatrue), axis=1)
-        X = np.concatenate((X, keeps), axis=1)
+        X = pd.concat((X.astype(float), keeps), axis=1)
         rand_cols = rand_cols + keepcols
-
     Xobs = pd.DataFrame(Omega * X, columns=rand_cols)
-    return Xobs, Omega
+    return Xobs.astype(float), Omega
 
 
 ## linear regression  (include timer)
