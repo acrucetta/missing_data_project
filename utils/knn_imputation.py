@@ -92,7 +92,7 @@ def KNN_imputation(df, k=5):
             k_mean = numeric_df.iloc[k_nearest_indices].iloc[:,j].mean()
             
             # Assigning the value to the nan row cell
-            print(i,j)
             numeric_df.iloc[i].iloc[j]=k_mean
+            
     return numeric_df
     

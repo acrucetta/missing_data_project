@@ -36,8 +36,6 @@ def create_matrix(X, seed=60615, fractionObserved=0.9, keepcols=None):
     return Xobs.astype(float), Omega
 
 
-## linear regression  (include timer)
-
 ## performance metric
 def calculate_errors(actual, predict, continuous=True):
     '''
