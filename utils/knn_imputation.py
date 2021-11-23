@@ -23,13 +23,26 @@ Sources used:
 def normalize_data(df):
     '''
     Normalizes the data in X
+    
+    Input:
+        - df: dataframe
+    Output:
+        - df: normalized dataframe
     '''
     scaler = MinMaxScaler()
     df = pd.DataFrame(scaler.fit_transform(df), columns = df.columns)
     return df
 
 def kSmallest(arr, k):
+    '''
+    Gets the k smallest values in an array
     
+    Input:
+        - arr: array
+        - k: number of smallest values to return
+    Output:
+        - k_smallest: k smallest values in the array
+    '''
     # Sort the given array 
     arr_i = arr.copy()
     arr_i.sort()
@@ -43,6 +56,12 @@ def KNN_imputation(df, k=5):
     '''
     Recieves a dataframe df and imputes the missing values
     using a K Nearest Neighbors imputer algorithm.
+    
+    Input:
+        - df: dataframe
+        - k: number of neighbors to use
+    Output:
+        - df: dataframe with missing values imputed
     '''
     # Extracting the numerical columns
     numeric_df = df.select_dtypes(include=['float64', 'int64'])
