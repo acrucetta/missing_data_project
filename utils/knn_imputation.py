@@ -51,7 +51,7 @@ def kSmallest(arr, k):
     return arr_i[1:k+1]
 
 
-def KNN_imputation(df, k=5):
+def KNN_imputation(df,Omega, k=5):
     '''
     Recieves a dataframe df and imputes the missing valuesƒƒ
     using a K Nearest Neighbors imputer algorithm.
@@ -63,7 +63,9 @@ def KNN_imputation(df, k=5):
         - df: dataframe with missing values imputed
     '''
     # Extracting the numerical columns
+    df[Omega==False] = np.nan
     numeric_df = df.select_dtypes(include=['float64', 'int64'])
+    categorical_df = df.select_dtypes(exclude=['float64', 'int64'])
 
     # Normalizing the data
     numeric_df = normalize_data(numeric_df)
@@ -95,4 +97,7 @@ def KNN_imputation(df, k=5):
             # Assigning the value to the nan row cell
             numeric_df.iloc[i].iloc[j] = k_mean
 
-    return numeric_df
+    # Concatenate categorical and numerical data
+    new_df = pd.concat([categorical_df, numeric_df], axis=1)
+
+    return new_df
