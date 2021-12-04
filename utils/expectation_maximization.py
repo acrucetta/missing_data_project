@@ -13,7 +13,7 @@ def clean_toy_set(x):
     x["Categorical D"][x["Categorical D"] == " N "] = 0
 
 
-def expecation_maximization(X, Omega, max_iter=1000, eps=.00001):
+def expecation_maximization(Xobs, Omega, keepcols, max_iter=1000, eps=.00001):
     '''
     Fills in missing values of a matrix using the expectation maximation
     algorithm to determine the maximum likelihood estimate.
@@ -33,7 +33,9 @@ def expecation_maximization(X, Omega, max_iter=1000, eps=.00001):
 
     Source: https://joon3216.github.io/research_materials/2019/em_imputation_python.html
     '''
-
+    X = Xobs.drop(labels=keepcols, axis=1)
+    everything_else = Xobs[keepcols]
+    Omega = Omega[:,:-len(keepcols)]
     nr, nc = X.shape
     # Collect M_i and O_i's
     one_to_nc = np.arange(1, nc + 1, step = 1)
@@ -78,8 +80,7 @@ def expecation_maximization(X, Omega, max_iter=1000, eps=.00001):
     
     result = {'mu': Mu,
               'Sigma': S,
-              'X_imputed': X_tilde,
-              'Omega': Omega,
+              'X_imputed': pd.concat([X_tilde, everything_else], axis=1),
               'iteration': iteration}
     
     return result

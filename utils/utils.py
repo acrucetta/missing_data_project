@@ -24,7 +24,7 @@ def read_in(file_path):
     return y, X
 
 
-def create_matrix(X, seed=60615, fractionObserved=0.9, keepcols=None):
+def create_matrix(Xorg, seed=60615, fractionObserved=0.9, keepcols=None):
     '''
     Recieves a matrix X and returns a matrix with the same dimensions and
     with a fraction of the observed records.
@@ -39,10 +39,11 @@ def create_matrix(X, seed=60615, fractionObserved=0.9, keepcols=None):
         or "False" otherwise
     '''
     if keepcols is not None:
-        keeps = X[keepcols]
-        X = X.drop(labels=keepcols, axis=1)
+        keeps = Xorg[keepcols]
+        X = Xorg.drop(labels=keepcols, axis=1)
         omegatrue = np.ones(keeps.shape, dtype=bool)
-
+    else:
+        X = Xorg
     rand_cols = list(X.columns)
     np.random.seed(seed)
     Omega = np.array(np.random.rand(X.shape[0], X.shape[1]) < fractionObserved)
@@ -52,7 +53,7 @@ def create_matrix(X, seed=60615, fractionObserved=0.9, keepcols=None):
         X = pd.concat((X.astype(float), keeps), axis=1)
         rand_cols = rand_cols + keepcols
     Xobs = pd.DataFrame(Omega * X, columns=rand_cols)
-    return Xobs.astype(float), Omega
+    return Xobs, Omega
 
 
 ## performance metric
@@ -77,4 +78,4 @@ def calculate_errors(actual, predict, continuous=True):
         recall = truepositive / (truepositive + np.sum((predict == 0)  & 
                                                        (actual == 1)))
         error2 = 2 * precision * recall /(precision + recall)
-    return error1, error2
+    return (error1, error2)
