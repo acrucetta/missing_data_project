@@ -40,7 +40,7 @@ def create_matrix(X, seed=60615, fractionObserved=0.9, keepcols=None):
     '''
     if keepcols is not None:
         keeps = X[keepcols]
-        X = X.drop(labels=keepcols, axis=1)
+        X.drop(labels=keepcols, axis=1, inplace=True)
         omegatrue = np.ones(keeps.shape, dtype=bool)
 
     rand_cols = list(X.columns)
@@ -52,7 +52,7 @@ def create_matrix(X, seed=60615, fractionObserved=0.9, keepcols=None):
         X = pd.concat((X.astype(float), keeps), axis=1)
         rand_cols = rand_cols + keepcols
     Xobs = pd.DataFrame(Omega * X, columns=rand_cols)
-    return Xobs.astype(float), Omega
+    return Xobs, Omega
 
 
 ## performance metric
@@ -77,4 +77,4 @@ def calculate_errors(actual, predict, continuous=True):
         recall = truepositive / (truepositive + np.sum((predict == 0)  & 
                                                        (actual == 1)))
         error2 = 2 * precision * recall /(precision + recall)
-    return error1, error2
+    return (error1, error2)

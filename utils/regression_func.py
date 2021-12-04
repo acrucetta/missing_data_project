@@ -21,7 +21,7 @@ def least_squares(X,y):
     w = np.linalg.inv(X.T.dot(X)).dot(X.T).dot(y)
     return w
 
-def predict_least_squares(X, w):
+def predict_least_squares(X, y):
     '''
     Predicts the target using a least squares algorithm.
     
@@ -32,6 +32,8 @@ def predict_least_squares(X, w):
         y (Array): Array of target
     '''
     # Calculate the target
-    y = X.dot(w)
-    return y
+    w = least_squares(X, y)
+    yhat = X.dot(w)
+    return yhat
+
 
