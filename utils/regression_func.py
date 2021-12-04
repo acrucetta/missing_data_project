@@ -1,6 +1,7 @@
 import numpy as np
 import pandas as pd
 import time
+import sys
 
 '''
 Creating a regression function that distinguishes
@@ -18,7 +19,10 @@ def least_squares(X,y):
         w (Array): Array of weights
     '''
     # Calculate the weights
-    w = np.linalg.inv(X.T.dot(X)).dot(X.T).dot(y)
+    if np.linalg.cond(X) < 1/sys.float_info.epsilon:
+        w = np.linalg.inv(X.T @ X) @ X.T @ y
+    else:
+        w, res, rank, s = np.linalg.lstsq(X, y, rcond=None)
     return w
 
 def predict_least_squares(X, y):
@@ -33,7 +37,7 @@ def predict_least_squares(X, y):
     '''
     # Calculate the target
     w = least_squares(X, y)
-    yhat = X.dot(w)
+    yhat = X.to_numpy() @ w
     return yhat
 
 

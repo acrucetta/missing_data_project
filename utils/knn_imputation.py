@@ -78,7 +78,6 @@ def KNN_imputation(df, Omega, keepcols, k=5):
         for i in lst_missing:
             # Get the comparison row
             euclidean_row = numeric_df.iloc[i]
-
             # Take euclidean distances of the other columns
             euclidean_distances = nan_euclidean_distances(
                 numeric_df, [euclidean_row.to_list()])
@@ -92,8 +91,7 @@ def KNN_imputation(df, Omega, keepcols, k=5):
 
             # Get mean of the k nearest neighbors
             k_mean = numeric_df.iloc[k_nearest_indices].iloc[:, j].mean()
-
             # Assigning the value to the nan row cell
             numeric_df.iloc[i].iloc[j] = k_mean
 
-    return numeric_df
+    return pd.concat([numeric_df,everything_else], axis=1)
