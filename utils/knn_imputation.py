@@ -8,7 +8,7 @@ from sklearn.metrics.pairwise import nan_euclidean_distances
 # 1) Choose missing value to fill in the data.
 # 2) Select the values in a row
 # 3) Choose the number of neighbors you want to work with (ideally 2-5)
-# 4)Calculate Euclidean distance from all other data points corresponding to each other in the row.
+# 4) Calculate Euclidean distance from all other data points corresponding to each other in the row.
 # 5) Select the smallest 2 and average out.
 
 # Sources used:
@@ -66,6 +66,7 @@ def KNN_imputation(df, Omega, keepcols, k=5):
     df[Omega == False] = np.nan
     numeric_df = df.drop(labels=keepcols, axis=1)
     everything_else = df[keepcols]
+    
     # Normalizing the data
     numeric_df = normalize_data(numeric_df)
 

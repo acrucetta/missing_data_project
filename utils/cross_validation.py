@@ -11,8 +11,21 @@ from statistics import mean
 seed = 4358
 RECODE = {0: "mean_X", 1: "svt_X", 2: "knn_X", 3: "em_X"}
 
+#TODO:
+# - Discuss whether we're going to iterate over the different parameters to cross-validate. 
+# (i.e. if we're going to do this for each of the different imputation methods)
+
 def cross_validation(X, y, seed, keepcols=None, obsp=.9):
-    
+    '''
+    Input:
+        X: pandas dataframe
+        y: pandas series
+        seed: int
+        keepcols: list of strings
+        obsp: float
+    Output:
+        error_means: list of errors
+    '''
     error_calc = {"mean_X":{"er1":[], "er2":[]}, 
 #                  "deletion":{"er1":[], "er2":[]}, 
                   "svt_X": {"er1":[], "er2":[]},
