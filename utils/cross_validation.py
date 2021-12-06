@@ -11,14 +11,19 @@ from statistics import mean
 seed = 4358
 RECODE = {0: "mean_X", 1: "svt_X", 2: "knn_X", 3: "em_X"}
 
-def cross_validation(X, y, seed, keepcols=None, obsp=.9):
+# TO-DO:
+# - Discuss whether we're going to iterate over the different parameters to cross-validate. 
+# (i.e. if we're going to do this for each of the different imputation methods)
+
+
+def cross_validation(X, y, seed, keepcols=None, obsp=.9, iters=30):
     
     error_calc = {"mean_X":{"er1":[], "er2":[]}, 
 #                  "deletion":{"er1":[], "er2":[]}, 
                   "svt_X": {"er1":[], "er2":[]},
                   "knn_X": {"er1":[], "er2":[]}, 
                   "em_X": {"er1":[], "er2":[]}}
-    for i in range(30):
+    for i in range(iters):
         random.seed(seed)
         Xobs, Omega = utils.create_matrix(X, seed=seed, 
                                     fractionObserved=obsp, keepcols=keepcols)
@@ -37,8 +42,11 @@ def cross_validation(X, y, seed, keepcols=None, obsp=.9):
         # del_X_oh = pd.get_dummies(deletion_X)
         # yhat_del = reg.predict_least_squares(del_X_oh, deletion_y)
         # error_calc["deletion"] += utils.calculate_errors(y_deletion, yhat_det)
-
         seed = (seed // (i + 1)) + (i ** 2)
-    error_means = {idx: {key: mean(idx) for key, idx in j.items()}
-                        for idx, j in error_calc.items()}
+    if type(error_calc["mean_X"]["er1"][0]) in [float, int]:
+        error_means = {idx: {key: mean(idx) for key, idx in j.items()}
+                       for idx, j in error_calc.items()}     
+    else:
+        error_means = {idx: {key: pd.concat(idx).mean() for key, idx in j.items()}
+                       for idx, j in error_calc.items()}
     return error_means
