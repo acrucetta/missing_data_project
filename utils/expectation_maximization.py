@@ -13,7 +13,7 @@ def clean_toy_set(x):
     x["Categorical D"][x["Categorical D"] == " N "] = 0
 
 
-def expecation_maximization(Xobs, Omega, keepcols, max_iter=1000, eps=.00001):
+def expecation_maximization(Xobs, Omega, keepcols, max_iter=100, eps=.01):
     '''
     Fills in missing values of a matrix using the expectation maximation
     algorithm to determine the maximum likelihood estimate.
