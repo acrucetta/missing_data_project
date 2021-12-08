@@ -17,11 +17,10 @@ def read_in(file_path,  dataset):
     Returns tuple of y (DataFrame) and X (DataFrame)
     '''
     df = pd.read_csv(file_path)
-    assert dataset in ['bike', 'loan']
-    if dataset == "bike":
+    if dataset == "Bike":
         y = df["cnt"]
         X = df.drop(["cnt"], axis = 1)
-    if dataset == "loan":
+    if dataset == "Loan":
         y = df["Risk_Flag"]
         X = df.drop(["Risk_Flag"], axis = 1)
     y = pd.DataFrame(y)
