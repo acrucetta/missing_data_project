@@ -24,15 +24,14 @@ def delete_missing(Omega, y, X):
     return final[0], final[1]
 
 
-def singular_value_thresholding(Omega, Xobs, keepcols):
+def singular_value_thresholding(Omega, Xobs, tau, keepcols):
     '''
     Use singular value thresholding to loop through and fill the missing values
     '''
     numeric_df = Xobs.drop(labels=keepcols, axis=1)
     everything_else = Xobs[keepcols]
     Omega = Omega[:,:-len(keepcols)]
-    tau = 30
-    stopping_value = 0.1
+    stopping_value = 0.01
     X_hat = numeric_df
     X_old = np.zeros((numeric_df.shape[0],numeric_df.shape[1]))
 
