@@ -67,9 +67,6 @@ def KNN_imputation(df, Omega, keepcols, k=5):
     numeric_df = df.drop(labels=keepcols, axis=1)
     everything_else = df[keepcols]
     
-    # Normalizing the data
-    numeric_df = normalize_data(numeric_df)
-
     # Iterating over each column
     for j in range(len(numeric_df.columns)):
         lst_missing = numeric_df.iloc[:,

@@ -2,18 +2,8 @@ import functools
 import numpy as np
 import pandas as pd
 
-def clean_toy_set(x):
-    x["Numerical A"] = x["Numerical A"].fillna(5)
-    x["Numerical B"] = x["Numerical B"].fillna(20)
-    x["Categorical D"] = x["Categorical D"].fillna(" N ") 
-    x["Categorical C"] = x["Categorical C"].fillna(" B ")
-    x["Categorical C"][x["Categorical C"] == " B "] = 1
-    x["Categorical C"][x["Categorical C"] == " A "] = 0
-    x["Categorical D"][x["Categorical D"] == " Y "] = 1
-    x["Categorical D"][x["Categorical D"] == " N "] = 0
 
-
-def expecation_maximization(Xobs, Omega, keepcols, max_iter=100, eps=.01):
+def expecation_maximization(Xobs, Omega, keepcols, max_iter=15, eps=.01):
     '''
     Fills in missing values of a matrix using the expectation maximation
     algorithm to determine the maximum likelihood estimate.
@@ -64,10 +54,13 @@ def expecation_maximization(Xobs, Omega, keepcols, max_iter=100, eps=.01):
                 S_MO = S[np.ix_(M_i, O_i)]
                 S_OM = S_MO.T
                 S_OO = S[np.ix_(O_i, O_i)]
-                Mu_tilde[i] = Mu[M_i] + S_MO @ np.linalg.inv(S_OO) @ \
+                U, Sig, Vt = np.linalg.svd(S_OO, full_matrices=False)
+                Sig[Sig > 0] = Sig[Sig > 0] ** -1
+                pseudo_inv = Vt. T @ np.diag(Sig) @ U.T
+                Mu_tilde[i] = Mu[M_i] + S_MO @ pseudo_inv @ \
                              (X_tilde.iloc[i, O_i] - Mu[O_i])
                 X_tilde.iloc[i, M_i] = Mu_tilde[i]
-                S_MM_O = S_MM - S_MO @ np.linalg.inv(S_OO) @ S_OM
+                S_MM_O = S_MM - S_MO @ pseudo_inv @ S_OM
                 S_tilde[i][np.ix_(M_i, M_i)] = S_MM_O
         Mu_new = np.mean(X_tilde, axis = 0)
         S_new = np.cov(X_tilde.T, bias = 1) + \

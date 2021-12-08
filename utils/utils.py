@@ -1,9 +1,10 @@
 import numpy as np
 import pandas as pd
+from sklearn.preprocessing import MinMaxScaler
 from scipy.sparse import data
 
 bike_file_path = "../data/Bike-Sharing-Dataset/hour.csv"
-loan_file_path = "../data/loan-default-data/Training Data.csv"
+loan_file_path = "../data/loan-default-data/Training\Data.csv"
 
 def read_in(file_path,  dataset):
     '''
@@ -16,14 +17,29 @@ def read_in(file_path,  dataset):
     Returns tuple of y (DataFrame) and X (DataFrame)
     '''
     df = pd.read_csv(file_path)
-    if dataset is "Bike":
+    if dataset == "Bike":
         y = df["cnt"]
         X = df.drop(["cnt"], axis = 1)
-    if dataset is "Loan":
+    if dataset == "Loan":
         y = df["Risk_Flag"]
         X = df.drop(["Risk_Flag"], axis = 1)
     y = pd.DataFrame(y)
     return y, X
+
+
+def normalize_data(df):
+    '''
+    Normalizes the data in X
+
+    Input:
+        - df: dataframe
+    Output:
+        - df: normalized dataframe
+    '''
+    scaler = MinMaxScaler()
+    df = pd.DataFrame(scaler.fit_transform(df), columns=df.columns)
+    return df
+
 
 
 def create_matrix(Xorg, seed=60615, fractionObserved=0.9, keepcols=None):
@@ -49,7 +65,9 @@ def create_matrix(Xorg, seed=60615, fractionObserved=0.9, keepcols=None):
     rand_cols = list(X.columns)
     np.random.seed(seed)
     Omega = np.array(np.random.rand(X.shape[0], X.shape[1]) < fractionObserved)
-
+    X[Omega == False] = np.nan
+    X = normalize_data(X)
+    X[Omega == False] = 0
     if keepcols is not None:
         Omega = np.concatenate((Omega, omegatrue), axis=1)
         X = pd.concat((X.astype(float), keeps), axis=1)
