@@ -1,23 +1,25 @@
 import numpy as np
 import pandas as pd
+from scipy.sparse import data
 
 bike_file_path = "../data/Bike-Sharing-Dataset/hour.csv"
 loan_file_path = "../data/loan-default-data/Training Data.csv"
 
-def read_in(file_path):
+def read_in(file_path,  dataset):
     '''
     reads in a filepath (specifically for bike and loans) and returns
     DataFrame of y data and X data
 
     Inputs:
         file_path (str): path to find file
+        dataset (str): name of dataset
     Returns tuple of y (DataFrame) and X (DataFrame)
     '''
     df = pd.read_csv(file_path)
-    if file_path is bike_file_path:
+    if dataset is "Bike":
         y = df["cnt"]
         X = df.drop(["cnt"], axis = 1)
-    if file_path is loan_file_path:
+    if dataset is "Loan":
         y = df["Risk_Flag"]
         X = df.drop(["Risk_Flag"], axis = 1)
     y = pd.DataFrame(y)
