@@ -15,7 +15,7 @@ RECODE = {0: "mean_X", 1: "svt_X", 2: "knn_X", 3: "em_X"}
 # - Discuss whether we're going to iterate over the different parameters to cross-validate. 
 # (i.e. if we're going to do this for each of the different imputation methods)
 
-def cross_validation(X, y, seed, keepcols=None, obsp=.9):
+def cross_validation(X, y, seed, tau, keepcols=None, obsp=.9, iters=30):
     '''
     Input:
         X: pandas dataframe
@@ -27,7 +27,7 @@ def cross_validation(X, y, seed, keepcols=None, obsp=.9):
         error_means: list of errors
     '''
     error_calc = {"mean_X":{"er1":[], "er2":[]}, 
-#                  "deletion":{"er1":[], "er2":[]}, 
+                  "deletion":{"er1":[], "er2":[]},
                   "svt_X": {"er1":[], "er2":[]},
                   "knn_X": {"er1":[], "er2":[]}, 
                   "em_X": {"er1":[], "er2":[]}}
@@ -36,7 +36,7 @@ def cross_validation(X, y, seed, keepcols=None, obsp=.9):
         Xobs, Omega = utils.create_matrix(X, seed=seed, 
                                     fractionObserved=obsp, keepcols=keepcols)
         mean_X = im.impute_mean(Omega, Xobs)
-        svt_X = im.singular_value_thresholding(Omega, Xobs, keepcols)
+        svt_X = im.singular_value_thresholding(Omega, Xobs, tau, keepcols)
         knn_X = ki.KNN_imputation(Xobs, Omega, keepcols)
         knn_X = knn_X.fillna(0)
         em_X = em.expecation_maximization(Xobs, Omega, keepcols)
@@ -46,10 +46,12 @@ def cross_validation(X, y, seed, keepcols=None, obsp=.9):
             er1, er2 = utils.calculate_errors(y, yhat)
             error_calc[RECODE[i]]["er1"] += [er1]
             error_calc[RECODE[i]]["er2"] += [er2]
-        # deletion_y, deletion_X = im.delete_missing(Omega, y, Xobs)
-        # del_X_oh = pd.get_dummies(deletion_X)
-        # yhat_del = reg.predict_least_squares(del_X_oh, deletion_y)
-        # error_calc["deletion"] += utils.calculate_errors(y_deletion, yhat_det)
+        deletion_y, deletion_X = im.delete_missing(Omega, y, Xobs)
+        del_X_oh = pd.get_dummies(deletion_X)
+        yhat_del = reg.predict_least_squares(del_X_oh, deletion_y)
+        er1, er2 = utils.calculate_errors(deletion_y, yhat_del)
+        error_calc["deletion"]["er1"] += [er1]
+        error_calc["deletion"]["er2"] += [er2]     
         seed = (seed // (i + 1)) + (i ** 2)
     if type(error_calc["mean_X"]["er1"][0]) in [float, int]:
         error_means = {idx: {key: mean(idx) for key, idx in j.items()}
