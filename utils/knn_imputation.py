@@ -2,6 +2,7 @@ import numpy as np
 import pandas as pd
 from sklearn.preprocessing import MinMaxScaler
 from sklearn.metrics.pairwise import nan_euclidean_distances
+from numba import jit
 
 # To find out the weights following steps have to be taken:
 
@@ -31,6 +32,7 @@ def normalize_data(df):
     return df
 
 
+@jit(nopython=True)
 def kSmallest(arr, k):
     '''
     Gets the k smallest values in an array
@@ -69,8 +71,7 @@ def KNN_imputation(df, Omega, keepcols, k=5):
 
     # Iterating over each column
     for j in range(len(numeric_df.columns)):
-        lst_missing = numeric_df.iloc[:,
-                                      j][numeric_df.iloc[:, j].isnull()].index.to_list()
+        lst_missing = numeric_df.iloc[:,j][numeric_df.iloc[:, j].isnull()].index.to_list()
 
         # Iterating over missing rows
         for i in lst_missing:
@@ -89,6 +90,7 @@ def KNN_imputation(df, Omega, keepcols, k=5):
 
             # Get mean of the k nearest neighbors
             k_mean = numeric_df.iloc[k_nearest_indices].iloc[:, j].mean(skipna=True)
+            
             # Assigning the value to the nan row cell
             numeric_df.iloc[i].iloc[j] = k_mean
 
