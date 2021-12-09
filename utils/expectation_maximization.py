@@ -34,11 +34,11 @@ def expecation_maximization(Xobs, Omega, keepcols, max_iter=15, eps=.01):
     X[Omega == False] = np.nan
     # Generate Mu_0 and Sigma_0
     Mu = np.nanmean(X, axis = 0)
+    X.fillna(0, inplace=True)
     observed_rows = np.all(Omega == True, axis=1)
     S = np.cov(X[observed_rows].T)
     if np.isnan(S).any():
         S = np.diag(np.nanvar(X, axis = 0))
-    
     # Start updating
     Mu_tilde, S_tilde = {}, {}
     X_tilde = X.copy()

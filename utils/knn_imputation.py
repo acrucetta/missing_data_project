@@ -66,7 +66,7 @@ def KNN_imputation(df, Omega, keepcols, k=5):
     df[Omega == False] = np.nan
     numeric_df = df.drop(labels=keepcols, axis=1)
     everything_else = df[keepcols]
-    
+
     # Iterating over each column
     for j in range(len(numeric_df.columns)):
         lst_missing = numeric_df.iloc[:,
@@ -88,8 +88,8 @@ def KNN_imputation(df, Omega, keepcols, k=5):
             k_nearest_indices = np.where(np.in1d(euc_flattened, k_nearest))[0]
 
             # Get mean of the k nearest neighbors
-            k_mean = numeric_df.iloc[k_nearest_indices].iloc[:, j].mean()
+            k_mean = numeric_df.iloc[k_nearest_indices].iloc[:, j].mean(skipna=True)
             # Assigning the value to the nan row cell
             numeric_df.iloc[i].iloc[j] = k_mean
 
-    return pd.concat([numeric_df,everything_else], axis=1)
+    return pd.concat([numeric_df,everything_else], axis=1).fillna(0)
